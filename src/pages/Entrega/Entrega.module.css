@@ -60,11 +60,12 @@
     margin: 0;
 }
 
-.loginBtn {
-    padding: 1.4vh;
+ .loginBtn {
+    padding: 2vh;
+    font-size: 2.4vh;
+
     background: #58A561;
     color: #005844;
-    font-size: 1.8vh;
     font-weight: 700;
     text-transform: uppercase;
     border: none;
@@ -110,12 +111,12 @@
     margin: 0;
 }
 
-.btnSair {
+ .btnSair {
+    font-size: 1.8vh;
+    padding: 0.8vh 2vw;
     background: transparent;
     border: 1px solid #2a3a4a;
     color: #888;
-    font-size: 1.4vh;
-    padding: 0.6vh 1.5vw;
     border-radius: 0.6vh;
     cursor: pointer;
     transition: all 0.2s;
@@ -131,9 +132,10 @@
 }
 
 /* ─── Busca ───────────────────────────────────────────────────── */
-.busca {
+ .busca {
     display: flex;
-    gap: 1vw;
+    flex-direction: column;
+    gap: 0.8vh;
     margin-bottom: 1.5vh;
 }
 
@@ -152,12 +154,13 @@
 
 .buscaInput:focus { border-color: #58A561; }
 
-.btnBuscar {
+ .btnBuscar {
+    width: 100%;
+    padding: 1.2vh 2vw;
+    font-size: 2.2vh;
     background: #58A561;
     color: #005844;
-    font-size: 1.6vh;
     font-weight: 700;
-    padding: 0 2vw;
     border: none;
     border-radius: 0.8vh;
     cursor: pointer;
@@ -168,17 +171,49 @@
 .btnBuscar:hover    { background: #488B53; color: #fff; }
 .btnBuscar:disabled { background: #444; color: #888; cursor: not-allowed; }
 
-.btnCamera {
+ .btnCamera {
+    width: 100%;
+    padding: 1.5vh 2vw;
+    font-size: 2.6vh;
     background: #1a2634;
     border: 1px solid #2a3a4a;
     border-radius: 0.8vh;
-    padding: 0 1.2vw;
-    font-size: 2.2vh;
     cursor: pointer;
     transition: border-color 0.2s;
 }
 
-.btnCameraAtiva { border-color: #58A561; }
+ .btnCameraAtiva { border-color: #58A561; }
+
+/* container for search and QR buttons */
+ .botoesBusca {
+    display: flex;
+    gap: 1vw;
+    margin-top: 0.8vh;
+}
+
+.botoesBusca button { flex: 1; }
+
+/* prêmio mais destacado */
+.linha.premioLinha {
+    font-size: 4.5vh;
+    font-weight: 700;
+    color: #58A561;
+}
+
+/* container interno do prêmio */
+.premioInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* texto à direita */
+    gap: 0.3vh;
+}
+
+/* sub‑nome do prêmio (menor) */
+.premioSub {
+    font-size: 1.6vh;
+    font-weight: 400;
+    color: #a0a0a0;
+}
 
 /* ─── Câmera ──────────────────────────────────────────────────── */
 .cameraBox {
@@ -251,12 +286,13 @@
     margin-top: 1vh;
 }
 
-.btnEntregar {
+ .btnEntregar {
+    padding: 1.5vh;
+    font-size: 2vh;
     flex: 1;
-    padding: 1.2vh;
+
     background: #58A561;
     color: #fff;
-    font-size: 1.6vh;
     font-weight: 700;
     border: none;
     border-radius: 0.8vh;
@@ -267,12 +303,13 @@
 .btnEntregar:hover    { background: #488B53; }
 .btnEntregar:disabled { background: #444; color: #888; cursor: not-allowed; }
 
-.btnCancelar {
-    padding: 1.2vh 2vw;
+ .btnCancelar {
+    width: 100%;
+    padding: 1.5vh 2.5vw;
+    font-size: 1.8vh;
     background: transparent;
     border: 1px solid #2a3a4a;
     color: #888;
-    font-size: 1.5vh;
     border-radius: 0.8vh;
     cursor: pointer;
     transition: all 0.2s;

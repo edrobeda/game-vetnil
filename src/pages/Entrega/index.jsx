@@ -168,14 +168,16 @@ function TelaBusca({ onLogout }) {
                                 onKeyDown={e => e.key === 'Enter' && buscarCodigo()}
                                 autoFocus
                             />
-                            <button className={styles.btnBuscar} onClick={() => buscarCodigo()} disabled={buscando}>
-                                {buscando ? '...' : 'Buscar'}
-                            </button>
-                            <button
-                                className={`${styles.btnCamera} ${camera ? styles.btnCameraAtiva : ''}`}
-                                onClick={() => setCamera(c => !c)}
-                                title='Escanear QR Code'
-                            >📷</button>
+                            <div className={styles.botoesBusca}>
+                                <button className={styles.btnBuscar} onClick={() => buscarCodigo()} disabled={buscando}>
+                                    {buscando ? '...' : 'Buscar'}
+                                </button>
+                                <button
+                                    className={`${styles.btnCamera} ${camera ? styles.btnCameraAtiva : ''}`}
+                                    onClick={() => setCamera(c => !c)}
+                                    title='Escanear QR Code'
+                                >📷</button>
+                            </div>
                         </div>
 
                         {camera && (
@@ -206,10 +208,17 @@ function TelaBusca({ onLogout }) {
                                     {partida.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.***-**')}
                                 </strong>
                             </div>
-                            <div className={styles.linha}>
+
+                            <h3 style={{textAlign:'center',margin: 0,padding: 0}}>
                                 <span>Prêmio</span>
-                                <strong>{partida.premio_nome}{partida.premio_sub ? ` — ${partida.premio_sub}` : ''}</strong>
-                            </div>
+                            </h3>
+                            <h1 style={{textAlign:'center',margin: 0,padding: 0}}>
+                                <strong>{partida.premio_nome}</strong>
+                            </h1>
+                            <h2 style={{textAlign:'center',margin: 0,padding: 0}}>
+                                 {partida.premio_sub && <strong><span className={styles.premioSub}>{partida.premio_sub}</span></strong>}
+                            </h2>
+                            
                             <div className={styles.linha}><span>Sorteado em</span><strong>{partida.jogado_em ?? '—'}</strong></div>
                             {partida.entregue_em && (
                                 <div className={styles.linha}><span>Entregue em</span><strong>{partida.entregue_em}</strong></div>
