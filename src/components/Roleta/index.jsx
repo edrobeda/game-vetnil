@@ -50,7 +50,7 @@ export default function Roleta({ premios, onPremioSorteado, onGirar, premioForca
         setGirando(true)
         if (onGirar) onGirar()
 
-        const angulo = 8 * 360 + (indexVencedor + 0.5) * sectorAngle
+        const angulo = 10 * 360 - (indexVencedor + 0.5) * sectorAngle
         wheelRef.current.style.transition = `transform ${DURACAO_SPIN}s cubic-bezier(0.05, 0.05, 0.05, 0.95)`
         wheelRef.current.style.transform = `translate(-50%, -50%) rotate(${angulo}deg)`
 
@@ -67,7 +67,7 @@ export default function Roleta({ premios, onPremioSorteado, onGirar, premioForca
         if (onGirar) onGirar()
 
         const indexVencedor = sortearVencedor(premios)
-        const angulo = 8 * 360 + (indexVencedor + 0.5) * sectorAngle
+        const angulo = 10 * 360 - (indexVencedor + 0.5) * sectorAngle
 
         wheelRef.current.style.transition = `transform ${DURACAO_SPIN}s cubic-bezier(0.05, 0.05, 0.05, 0.95)`
         wheelRef.current.style.transform = `translate(-50%, -50%) rotate(${angulo}deg)`

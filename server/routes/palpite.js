@@ -123,6 +123,7 @@ router.post('/', async (req, res) => {
             premioId: premioSorteado.id,
             premioNome: premioSorteado.nome,
             premioSub: premioSorteado.subnome,
+            premios: premiosRes.rows,
         })
     } catch (err) {
         await client.query('ROLLBACK')

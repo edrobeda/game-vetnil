@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { QRCode } from 'react-qr-code'
 import api from '../../services/api'
 import styles from './Cadastro.module.css'
@@ -47,7 +47,7 @@ function RoletaInline({ premios, premioForcado, onFim, titulo }) {
         const idx = premios.findIndex(p => p.id === premioForcado.id)
         if (idx < 0) return
         setGirou(true)
-        const angulo = 8 * 360 + (idx + 0.5) * sectorAngle
+        const angulo = 10 * 360 - (idx + 0.5) * sectorAngle
         wheelRef.current.style.transition = `transform ${DURACAO_SPIN}s cubic-bezier(0.05,0.05,0.05,0.95)`
         wheelRef.current.style.transform = `translate(-50%,-50%) rotate(${angulo}deg)`
         setTimeout(onFim, DURACAO_SPIN * 1000 + 600)
@@ -405,14 +405,9 @@ export default function Cadastro() {
     const [premioForcado, setPremioForcado] = useState(null)
     const [partida, setPartida]             = useState(null)
 
-    const carregarPremios = useCallback(async () => {
-        try { const { data } = await api.get('/api/premios'); setPremios(data) } catch {}
-    }, [])
-
     function irParaPalpite(id, nome) {
         setClienteId(id)
         setNomeCliente(nome)
-        carregarPremios()
         setTela('palpite')
     }
 
@@ -444,6 +439,7 @@ export default function Cadastro() {
     }
 
     function handlePalpiteEnviado(data, palpite) {
+        setPremios(data.premios || [])
         setPremioForcado({ id: data.premioId, nome: data.premioNome, subnome: data.premioSub })
         setPartida({ codigo: data.codigo, premio_nome: data.premioNome, premio_sub: data.premioSub, palpite })
         setTela('roleta')
