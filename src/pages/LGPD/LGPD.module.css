@@ -1,0 +1,65 @@
+.page {
+    min-height: 100vh;
+    background: #f5f5f5;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 3vh 4vw;
+}
+
+.card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 3rem 2.5rem;
+    max-width: 680px;
+    width: 100%;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+
+.titulo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--primary, #005844);
+    margin: 0 0 0.25rem;
+}
+
+.sub {
+    font-size: 0.875rem;
+    color: #999;
+    margin: 0 0 2rem;
+}
+
+.secao {
+    margin-bottom: 1.5rem;
+}
+
+.secao h2 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #555;
+    margin: 0 0 0.4rem;
+}
+
+.secao p {
+    font-size: 0.95rem;
+    color: #333;
+    line-height: 1.65;
+    margin: 0;
+}
+
+.btnVoltar {
+    margin-top: 2rem;
+    padding: 0.65rem 1.75rem;
+    background: var(--primary, #005844);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btnVoltar:hover { opacity: 0.85; }

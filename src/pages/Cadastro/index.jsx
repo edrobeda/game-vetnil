@@ -126,6 +126,7 @@ function TelaIdentificacao({ onEncontrado, onNaoEncontrado }) {
 // ─── Tela 2: Cadastro ─────────────────────────────────────
 function TelaCadastro({ cpfInicial, onCadastrado }) {
     const [form, setForm]             = useState({ nome: '', cpf: cpfInicial || '', telefone: '', email: '' })
+    const [lgpd, setLgpd]             = useState(false)
     const [erro, setErro]             = useState('')
     const [carregando, setCarregando] = useState(false)
 
@@ -141,6 +142,10 @@ function TelaCadastro({ cpfInicial, onCadastrado }) {
         e.preventDefault()
         if (!form.nome || !form.cpf || !form.telefone) {
             setErro('Nome, CPF e telefone são obrigatórios.')
+            return
+        }
+        if (!lgpd) {
+            setErro('Você precisa aceitar a Política de Privacidade para continuar.')
             return
         }
         setErro('')
@@ -179,6 +184,13 @@ function TelaCadastro({ cpfInicial, onCadastrado }) {
                     <label>E-mail <span className={styles.opcional}>(opcional)</span></label>
                     <input name='email' type='email' value={form.email} onChange={handleChange} autoComplete='off' />
                 </div>
+                <label className={styles.checkLgpd}>
+                    <input type='checkbox' checked={lgpd} onChange={e => setLgpd(e.target.checked)} />
+                    <span>
+                        Li e aceito a{' '}
+                        <a href='/lgpd' target='_blank' rel='noopener noreferrer'>Política de Privacidade</a>
+                    </span>
+                </label>
                 {erro && <p className={styles.erro}>{erro}</p>}
                 <button type='submit' className={styles.botao} disabled={carregando}>
                     {carregando ? 'Cadastrando...' : 'CADASTRAR'}

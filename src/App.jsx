@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import api from './services/api'
 import Cadastro from './pages/Cadastro'
 import Jogo     from './pages/Jogo'
 import Manager  from './pages/Manager'
 import Entrega  from './pages/Entrega'
+import LGPD     from './pages/LGPD'
 
 const POLL_MS = 60_000
 
@@ -135,8 +136,11 @@ function TelaErro({ onRetry }) {
 }
 
 export default function App() {
+    const location = useLocation()
     const [status, setStatus] = useState('carregando')
     const [motivo, setMotivo] = useState(null)
+
+    if (location.pathname === '/lgpd') return <LGPD />
 
     const verificarStatus = useCallback(async () => {
         try {
