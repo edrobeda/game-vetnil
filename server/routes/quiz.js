@@ -18,11 +18,11 @@ function sortearPremio(premios) {
     return premios[premios.length - 1]
 }
 
+const GAME_PREFIX = process.env.GAME_PREFIX || 'EVT'
+
 function gerarCodigo() {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-    const num    = String(Math.floor(10000 + Math.random() * 90000))
-    const suffix = Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
-    return `EVT-${num}-${suffix}`
+    const hex = Array.from({ length: 5 }, () => '0123456789ABCDEF'[Math.floor(Math.random() * 16)]).join('')
+    return `${GAME_PREFIX}-${hex}`
 }
 
 // GET /api/quiz — perguntas sem revelar a resposta correta

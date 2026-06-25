@@ -61,10 +61,12 @@ function TelaLogin({ onLogin }) {
     )
 }
 
+const PREFIX = (import.meta.env.VITE_GAME_PREFIX || 'EVT').toUpperCase()
+
 // ─── Busca e confirmação ──────────────────────────────────────
 function TelaBusca({ onLogout }) {
     const operador                    = sessionStorage.getItem(OPERADOR_KEY) || ''
-    const [codigo, setCodigo]         = useState('')
+    const [sufixo, setSufixo]         = useState('')
     const [partida, setPartida]       = useState(null)
     const [erro, setErro]             = useState('')
     const [msg, setMsg]               = useState('')
@@ -75,8 +77,9 @@ function TelaBusca({ onLogout }) {
     const animRef  = useRef(null)
 
     async function buscarCodigo(cod) {
-        const c = (cod || codigo).trim().toUpperCase()
+        let c = (cod || sufixo).trim().toUpperCase()
         if (!c) return
+        if (!c.includes('-')) c = `${PREFIX}-${c}`
         setBuscando(true)
         setErro('')
         setPartida(null)
@@ -84,7 +87,7 @@ function TelaBusca({ onLogout }) {
         try {
             const { data } = await api.get(`/api/entrega/${c}`, entregaHeader())
             setPartida(data)
-            setCodigo(c)
+            setSufixo(c.split('-')[1] || c)
         } catch (err) {
             if (err.response?.status === 401) { sessionStorage.removeItem(TOKEN_KEY); onLogout() }
             else setErro(err.response?.data?.erro || 'Código não encontrado.')
@@ -109,10 +112,9 @@ function TelaBusca({ onLogout }) {
 
     function cancelar() {
         setPartida(null)
-        setCodigo('')
+        setSufixo('')
         setErro('')
         setMsg('')
-        setOperador('')
     }
 
     useEffect(() => {
@@ -166,14 +168,18 @@ function TelaBusca({ onLogout }) {
                 {!partida && (
                     <>
                         <div className={styles.busca}>
-                            <input
-                                className={styles.buscaInput}
-                                placeholder='Digite o código (ex: EVT-12345-ABCD)'
-                                value={codigo}
-                                onChange={e => setCodigo(e.target.value.toUpperCase())}
-                                onKeyDown={e => e.key === 'Enter' && buscarCodigo()}
-                                autoFocus
-                            />
+                            <div className={styles.buscaInputWrap}>
+                                <span className={styles.buscaPrefix}>{PREFIX}-</span>
+                                <input
+                                    className={styles.buscaInput}
+                                    placeholder='XXXXX'
+                                    maxLength={5}
+                                    value={sufixo}
+                                    onChange={e => setSufixo(e.target.value.toUpperCase())}
+                                    onKeyDown={e => e.key === 'Enter' && buscarCodigo()}
+                                    autoFocus
+                                />
+                            </div>
                             <div className={styles.botoesBusca}>
                                 <button className={styles.btnBuscar} onClick={() => buscarCodigo()} disabled={buscando}>
                                     {buscando ? '...' : 'Buscar'}

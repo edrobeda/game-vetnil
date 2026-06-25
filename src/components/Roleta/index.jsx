@@ -40,25 +40,27 @@ export default function Roleta({ premios, onPremioSorteado, onGirar, premioForca
     const gradiente = useMemo(() => gerarGradiente(premios.length, cores), [premios.length, cores])
     const sectorAngle = premios.length > 0 ? 360 / premios.length : 0
 
-    // Modo display: quando há premioForcado, gira automaticamente para ele
+    // Modo display: quando há premioForcado, aguarda 2s e gira automaticamente
     useEffect(() => {
         if (!premioForcado || !wheelRef.current || girando || premios.length === 0) return
 
         const indexVencedor = premios.findIndex(p => p.id === premioForcado.id)
         if (indexVencedor < 0) return
 
-        setGirando(true)
-        if (onGirar) onGirar()
+        const delay = setTimeout(() => {
+            setGirando(true)
+            if (onGirar) onGirar()
 
-        const angulo = 10 * 360 - (indexVencedor + 0.5) * sectorAngle
-        wheelRef.current.style.transition = `transform ${DURACAO_SPIN}s cubic-bezier(0.05, 0.05, 0.05, 0.95)`
-        wheelRef.current.style.transform = `translate(-50%, -50%) rotate(${angulo}deg)`
+            const angulo = 10 * 360 - (indexVencedor + 0.5) * sectorAngle
+            wheelRef.current.style.transition = `transform ${DURACAO_SPIN}s cubic-bezier(0.05, 0.05, 0.05, 0.95)`
+            wheelRef.current.style.transform = `translate(-50%, -50%) rotate(${angulo}deg)`
+        }, 2000)
 
         const timer = setTimeout(() => {
             onPremioSorteado(premioForcado)
-        }, DURACAO_SPIN * 1000 + 600)
+        }, 2000 + DURACAO_SPIN * 1000 + 600)
 
-        return () => clearTimeout(timer)
+        return () => { clearTimeout(delay); clearTimeout(timer) }
     }, [premioForcado, premios])  // eslint-disable-line
 
     function girar() {

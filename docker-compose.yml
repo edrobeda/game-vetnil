@@ -8,6 +8,7 @@ services:
         VITE_API_TOKEN: ${VITE_API_TOKEN}
         VITE_PRIMARY_COLOR: ${VITE_PRIMARY_COLOR:-#005844}
         VITE_GAME_TITLE: ${VITE_GAME_TITLE:-Game Roleta}
+        VITE_GAME_PREFIX: ${VITE_GAME_PREFIX:-EVT}
     container_name: ${CONTAINER_NAME:-DK_GAME_WL}
     restart: unless-stopped
     networks:
@@ -33,6 +34,7 @@ services:
       MANAGER_PASS: ${MANAGER_PASS}
       ENTREGA_PASS: ${ENTREGA_PASS}
       QUIZ_MIN_ACERTOS: ${QUIZ_MIN_ACERTOS:-3}
+      GAME_PREFIX: ${GAME_PREFIX:-EVT}
     networks:
       - docker-base_default
       - eventify_network

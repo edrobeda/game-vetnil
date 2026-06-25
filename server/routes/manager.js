@@ -157,7 +157,7 @@ function validarQuiz({ pergunta, primeira, segunda, terceira, quarta, ultima_res
     const respostas = [primeira, segunda, terceira, quarta, ultima_resposta].filter(r => r && r.trim())
     if (respostas.length < 2) return 'Mínimo de 2 respostas.'
     const corretaNum = parseInt(correta)
-    const validas = [1, 2, terceira ? 3 : null, quarta ? 4 : null].filter(Boolean)
+    const validas = [1, 2, terceira ? 3 : null, quarta ? 4 : null, ultima_resposta ? 5 : null].filter(Boolean)
     if (!validas.includes(corretaNum)) return 'Resposta correta inválida para as opções preenchidas.'
     return null
 }

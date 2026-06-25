@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import api from '../../services/api'
 import Roleta from '../../components/Roleta'
 import ModalPremio from '../../components/ModalPremio'
@@ -22,7 +22,7 @@ function TelaStart({ onAvancar, playBotao }) {
                 <div className={styles.logoArea}>
                     <h1 className={styles.logoTexto}>{TITLE}</h1>
                 </div>
-                <p className={styles.textoInicio}>Quiz + Roleta de prêmios!</p>
+                <p className={styles.textoInicio}>Responda e concorra a prêmios!</p>
                 <div className={styles.botaoArea}>
                     <button className={styles.btnGame} onClick={() => { playBotao(); onAvancar() }}>
                         VAMOS LÁ
@@ -164,24 +164,30 @@ function TelaQuiz({ nomeParticipante, clienteId, onConcluido, playBotao, modoTes
     }
 
     const pergunta = perguntas[indice]
+    // Embaralha respostas uma vez por pergunta (índice muda → novo embaralhamento)
+    const respostasEmbaralhadas = useMemo(
+        () => pergunta ? pergunta.respostas.map((r, i) => ({ ...r, _origIdx: i })).sort(() => Math.random() - 0.5) : [],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [indice, perguntas.length]
+    )
 
     return (
         <div className={`${styles.tela} ${styles.telaQuiz}`}>
             <div className={styles.overlay}>
                 <div className={styles.questionArea}>
                     <p className={styles.numeroPergunta}>
-                        Pergunta {indice + 1} de {perguntas.length} — {nomeParticipante}
+                        Pergunta {indice + 1} de {perguntas.length}
                     </p>
                     <p className={styles.textoPergunta}>{pergunta.pergunta}</p>
                 </div>
                 <div className={styles.respostasArea}>
-                    {pergunta.respostas.map((r, i) => (
+                    {respostasEmbaralhadas.map((r) => (
                         <label
-                            key={i}
-                            className={`${styles.linhaResposta} ${selecionado === i ? styles.selecionada : ''}`}
-                            onClick={() => setSelecionado(i)}
+                            key={r._origIdx}
+                            className={`${styles.linhaResposta} ${selecionado === r._origIdx ? styles.selecionada : ''}`}
+                            onClick={() => setSelecionado(r._origIdx)}
                         >
-                            <input type='radio' name='resposta' checked={selecionado === i} onChange={() => setSelecionado(i)} />
+                            <input type='radio' name='resposta' checked={selecionado === r._origIdx} onChange={() => setSelecionado(r._origIdx)} />
                             {r.texto}
                         </label>
                     ))}

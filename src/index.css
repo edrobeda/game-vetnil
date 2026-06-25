@@ -2,7 +2,7 @@
     box-sizing: border-box;
 }
 
-html, body, #root {
+html, body {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -10,10 +10,19 @@ html, body, #root {
     font-family: system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
 #root {
-    min-height: 100vh;
+    position: relative;
+    height: 100vh;
+    width: 56.25vh; /* 9:16 portrait box — totem/TV/tablet */
+    max-width: 100vw;
+    overflow: hidden;
 }
 
 button {

@@ -19,7 +19,7 @@ export default function ModalPremio({ premio, onFechar }) {
                     <p className={styles.subPremio}>{premio.subnome}</p>
                 )}
                 <p className={styles.obs}>
-                    Retire seu prêmio no estande!
+                    Retire seu prêmio no stand
                 </p>
                 <button className={styles.btnFechar} onClick={onFechar}>
                     ENCERRAR

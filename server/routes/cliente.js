@@ -26,13 +26,38 @@ router.post('/', async (req, res) => {
             return res.status(409).json({ erro: 'CPF já cadastrado.' })
         }
 
+        if (email && email.trim() !== '') {
+            const dupEmail = await pool.query(
+                'SELECT id FROM clientes WHERE email = $1 AND tenant_id = $2',
+                [email.trim(), TENANT_ID]
+            )
+            if (dupEmail.rows.length > 0) {
+                return res.status(409).json({ erro: 'E-mail já cadastrado neste jogo.' })
+            }
+        }
+
+        if (telefone && telefone.replace(/\D/g, '') !== '') {
+            const telLimpo = telefone.replace(/\D/g, '')
+            const dupTel = await pool.query(
+                'SELECT id FROM clientes WHERE telefone = $1 AND tenant_id = $2',
+                [telLimpo, TENANT_ID]
+            )
+            if (dupTel.rows.length > 0) {
+                return res.status(409).json({ erro: 'Telefone já cadastrado neste jogo.' })
+            }
+        }
+
         const result = await pool.query(
             `INSERT INTO clientes (nome, cpf, email, perfil, telefone, tenant_id)
              VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-            [nome, cpfLimpo, email || '', perfil || '', telefone || null, TENANT_ID]
+            [nome, cpfLimpo, email || '', perfil || '', telefone ? telefone.replace(/\D/g, '') : null, TENANT_ID]
         )
         res.status(201).json({ id: result.rows[0].id })
     } catch (err) {
+        if (err.code === '23505') {
+            if (err.constraint?.includes('email')) return res.status(409).json({ erro: 'E-mail já cadastrado em outro jogo.' })
+            if (err.constraint?.includes('telefone')) return res.status(409).json({ erro: 'Telefone já cadastrado em outro jogo.' })
+        }
         console.error('Erro ao cadastrar:', err.message)
         res.status(500).json({ erro: 'Erro interno.' })
     }

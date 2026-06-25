@@ -139,20 +139,41 @@
     margin-bottom: 1.5vh;
 }
 
-.buscaInput {
-    flex: 1;
+.buscaInputWrap {
+    display: flex;
+    align-items: center;
     background: #1a2634;
     border: 1px solid #2a3a4a;
     border-radius: 0.8vh;
-    padding: 1.2vh 1.5vw;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.buscaInputWrap:focus-within { border-color: #58A561; }
+
+.buscaPrefix {
+    padding: 1.2vh 1vw 1.2vh 1.5vw;
+    font-size: 1.8vh;
+    font-family: monospace;
+    font-weight: 700;
+    color: #58A561;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.buscaInput {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 1.2vh 1.5vw 1.2vh 0;
     font-size: 1.8vh;
     color: #e0e0e0;
     outline: none;
     font-family: monospace;
-    transition: border-color 0.2s;
+    letter-spacing: 0.15em;
 }
 
-.buscaInput:focus { border-color: #58A561; }
+.buscaInput:focus { border-color: unset; }
 
  .btnBuscar {
     width: 100%;
