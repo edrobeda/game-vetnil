@@ -697,3 +697,164 @@
         justify-content: flex-end;
     }
 }
+
+/* ─── Simulador de Sorteio ───────────────────────────────────── */
+.simulador {
+    background: #0b1520;
+    border: 1px solid #1e2e3e;
+    border-left: 0.3vw solid #B7C922;
+    border-radius: 0.8vh;
+    padding: 1.5vh 1.5vw;
+    margin-bottom: 2vh;
+}
+
+.simHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1vh;
+}
+
+.simTitulo {
+    font-size: 1.5vh;
+    font-weight: 600;
+    color: #ccc;
+}
+
+.simControles {
+    display: flex;
+    align-items: center;
+    gap: 0.6vw;
+}
+
+.simInput {
+    width: 7vw;
+    min-width: 64px;
+    background: #1a2634;
+    border: 1px solid #2a3a4a;
+    border-radius: 0.5vh;
+    padding: 0.5vh 0.6vw;
+    font-size: 1.4vh;
+    color: #e0e0e0;
+    text-align: center;
+    outline: none;
+}
+
+.simLabel {
+    font-size: 1.3vh;
+    color: #888;
+}
+
+.simBtn {
+    padding: 0.5vh 1.2vw;
+    background: #B7C922;
+    color: #1a2200;
+    border: none;
+    border-radius: 0.5vh;
+    font-size: 1.4vh;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.simBtn:hover { background: #a0b01a; }
+
+.simResultados {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7vh;
+    margin-top: 1.4vh;
+}
+
+.simLinha {
+    display: grid;
+    grid-template-columns: 16vw 1fr 5vw 5vw 5.5vw;
+    align-items: center;
+    gap: 0.8vw;
+    font-size: 1.3vh;
+}
+
+.simNome {
+    color: #ddd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+.simBarraWrap {
+    position: relative;
+    height: 1.6vh;
+    background: #1a2634;
+    border-radius: 0.4vh;
+    overflow: visible;
+}
+
+.simBarra {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: #58A561;
+    border-radius: 0.4vh;
+    min-width: 2px;
+    transition: width 0.35s ease;
+}
+
+.simMarca {
+    position: absolute;
+    top: -25%;
+    width: 2px;
+    height: 150%;
+    background: #C3630A;
+    border-radius: 1px;
+}
+
+.simCount {
+    color: #fff;
+    font-weight: 700;
+    text-align: right;
+    font-size: 1.4vh;
+}
+
+.simPct {
+    color: #aaa;
+    text-align: right;
+}
+
+.simDiff {
+    text-align: right;
+    font-weight: 600;
+    font-size: 1.3vh;
+}
+
+.simDiffPos { color: #58A561; }
+.simDiffNeg { color: #ff6b6b; }
+
+.simLegenda {
+    display: flex;
+    align-items: center;
+    gap: 1.5vw;
+    flex-wrap: wrap;
+    margin-top: 1vh;
+    padding-top: 0.8vh;
+    border-top: 1px solid #1e2e3e;
+}
+
+.simLegReal {
+    font-size: 1.2vh;
+    color: #58A561;
+}
+
+.simLegEsp {
+    font-size: 1.2vh;
+    color: #C3630A;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+}
+
+.simObs {
+    font-size: 1.1vh;
+    color: #444;
+    font-style: italic;
+    margin-left: auto;
+}

@@ -578,6 +578,101 @@ function LinhaEditPremio({ premio, onSalvo, onCancelar }) {
     )
 }
 
+// ─── Simulador de sorteio ─────────────────────────────────────
+function sortearUm(lista) {
+    const total = lista.reduce((acc, p) => acc + (CHANCE_PESOS[p.chance] ?? p.chance), 0)
+    let rand = Math.random() * total
+    for (const p of lista) {
+        rand -= (CHANCE_PESOS[p.chance] ?? p.chance)
+        if (rand <= 0) return p
+    }
+    return lista[lista.length - 1]
+}
+
+function SimuladorSorteio({ premios }) {
+    const ativos = premios.filter(p => p.ativo)
+    const [n, setN] = useState(100)
+    const [resultado, setResultado] = useState(null)
+
+    function simular() {
+        if (ativos.length === 0) return
+        const contagem = {}
+        ativos.forEach(p => { contagem[p.id] = 0 })
+        for (let i = 0; i < n; i++) {
+            const s = sortearUm(ativos)
+            contagem[s.id] = (contagem[s.id] || 0) + 1
+        }
+        setResultado(contagem)
+    }
+
+    if (ativos.length === 0) return null
+
+    const totalPeso = ativos.reduce((acc, p) => acc + (CHANCE_PESOS[p.chance] ?? p.chance), 0)
+
+    const maxPct = resultado
+        ? Math.max(
+            ...ativos.map(p => resultado[p.id] / n * 100),
+            ...ativos.map(p => CHANCE_PESOS[p.chance] / totalPeso * 100)
+          )
+        : 100
+    const scale = 90 / (maxPct || 1)
+
+    const ordenados = resultado
+        ? [...ativos].sort((a, b) => (resultado[b.id] || 0) - (resultado[a.id] || 0))
+        : ativos
+
+    return (
+        <div className={styles.simulador}>
+            <div className={styles.simHeader}>
+                <span className={styles.simTitulo}>🎲 Simulador de Sorteio</span>
+                <div className={styles.simControles}>
+                    <input
+                        type='number' min='1' max='100000'
+                        value={n}
+                        onChange={e => setN(Math.max(1, Math.min(100000, parseInt(e.target.value) || 100)))}
+                        className={styles.simInput}
+                    />
+                    <span className={styles.simLabel}>sorteios</span>
+                    <button className={styles.simBtn} onClick={simular}>Simular</button>
+                </div>
+            </div>
+
+            {resultado && (
+                <div className={styles.simResultados}>
+                    {ordenados.map(p => {
+                        const real    = resultado[p.id] || 0
+                        const pctReal = real / n * 100
+                        const pctEsp  = CHANCE_PESOS[p.chance] / totalPeso * 100
+                        const diff    = pctReal - pctEsp
+                        const barW    = pctReal * scale
+                        const markL   = pctEsp * scale
+
+                        return (
+                            <div key={p.id} className={styles.simLinha}>
+                                <span className={styles.simNome} title={p.nome}>{p.nome}</span>
+                                <div className={styles.simBarraWrap}>
+                                    <div className={styles.simBarra} style={{ width: `${barW}%` }} />
+                                    <div className={styles.simMarca} style={{ left: `${markL}%` }} />
+                                </div>
+                                <span className={styles.simCount}>{real}×</span>
+                                <span className={styles.simPct}>{pctReal.toFixed(1)}%</span>
+                                <span className={`${styles.simDiff} ${diff >= 0 ? styles.simDiffPos : styles.simDiffNeg}`}>
+                                    {diff >= 0 ? '+' : ''}{diff.toFixed(1)}%
+                                </span>
+                            </div>
+                        )
+                    })}
+                    <div className={styles.simLegenda}>
+                        <span className={styles.simLegReal}>&#9632; Real</span>
+                        <span className={styles.simLegEsp}>&#124; Esperado</span>
+                        <span className={styles.simObs}>Esperado calculado com pesos atuais dos prêmios ativos</span>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}
+
 // ─── Tabela prêmios ───────────────────────────────────────────
 function TabelaPremios({ premios, onAtualizar, onRemover }) {
     const [adicionando, setAdicionando] = useState(false)
@@ -598,6 +693,7 @@ function TabelaPremios({ premios, onAtualizar, onRemover }) {
     return (
         <>
             <InfoChances premios={premios} />
+            <SimuladorSorteio premios={premios} />
 
             <div className={styles.tabelaHeader}>
                 {!adicionando && (
