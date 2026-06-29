@@ -3,7 +3,7 @@
     height: 100%;
     width: 100%;
     overflow: hidden;
-    background: var(--primary);
+    background: #fff;
 }
 
 /* ─── Roda ─────────────────────────────────────────────────── */
@@ -27,9 +27,9 @@
     height: 0;
     border-left: min(2.5vw, 1.4vh) solid transparent;
     border-right: min(2.5vw, 1.4vh) solid transparent;
-    border-top: min(5vw, 2.8vh) solid white;
+    border-top: min(5vw, 2.8vh) solid var(--primary);
     z-index: 10;
-    filter: drop-shadow(0 0.3vh 0.6vh rgba(0,0,0,0.5));
+    filter: drop-shadow(0 0.3vh 0.6vh rgba(0,0,0,0.3));
 }
 
 /* ─── Centro ────────────────────────────────────────────────── */
@@ -88,8 +88,8 @@
 .btnGirar {
     position: relative;
     padding: 1.5vh 8vw;
-    background-color: #fff;
-    color: var(--primary);
+    background-color: var(--primary);
+    color: var(--btn-text);
     font-size: 2.2vh;
     font-weight: 700;
     text-transform: uppercase;
@@ -99,21 +99,12 @@
     transition: filter 0.2s;
 }
 
-.btnGirar::after {
-    content: '';
-    position: absolute;
-    inset: -0.5vh;
-    border-radius: 1.5vh;
-    border: 0.3vh solid rgba(255,255,255,0.5);
-    opacity: 0.5;
-}
-
 .btnGirar:hover:not(:disabled) {
-    filter: brightness(0.92);
+    filter: brightness(0.88);
 }
 
 .btnGirar:disabled {
-    background-color: #888;
-    color: white;
+    background-color: #bbb;
+    color: #666;
     cursor: not-allowed;
 }

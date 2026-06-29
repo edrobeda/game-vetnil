@@ -2,11 +2,44 @@ import { useRef, useState, useMemo, useEffect } from 'react'
 import { CHANCE_PESOS } from '../../constants/chances'
 import styles from './Roleta.module.css'
 
-const CORES = ['#005844', '#488B53', '#58A561', '#006742', '#DC785A', '#B7C922', '#5C5B60', '#C3630A', '#AC0C17']
 const DURACAO_SPIN = 9 // segundos
+const PRIMARY = import.meta.env.VITE_PRIMARY_COLOR || '#005844'
 
-function shuffle(arr) {
-    return [...arr].sort(() => Math.random() - 0.5)
+function hexToHsl(hex) {
+    const h = hex.replace('#', '')
+    const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h
+    const r = parseInt(full.slice(0, 2), 16) / 255
+    const g = parseInt(full.slice(2, 4), 16) / 255
+    const b = parseInt(full.slice(4, 6), 16) / 255
+    const max = Math.max(r, g, b), min = Math.min(r, g, b)
+    let hue = 0, sat = 0
+    const lig = (max + min) / 2
+    if (max !== min) {
+        const d = max - min
+        sat = lig > 0.5 ? d / (2 - max - min) : d / (max + min)
+        switch (max) {
+            case r: hue = ((g - b) / d + (g < b ? 6 : 0)) / 6; break
+            case g: hue = ((b - r) / d + 2) / 6; break
+            case b: hue = ((r - g) / d + 4) / 6; break
+        }
+    }
+    return [hue * 360, sat * 100, lig * 100]
+}
+
+function gerarVariacoes(hex, n) {
+    const [h, s, l] = hexToHsl(hex)
+    // Distribui lightness de 18% a 70%, intercala adjacentes para contraste visual
+    const spread = Array.from({ length: n }, (_, i) => 18 + (i / Math.max(n - 1, 1)) * 52)
+    const result = []
+    let lo = 0, hi = n - 1
+    while (lo <= hi) {
+        result.push(spread[lo++])
+        if (lo <= hi) result.push(spread[hi--])
+    }
+    return result.map((newL, i) => {
+        const newS = Math.min(100, Math.max(20, s + (i % 2 === 0 ? 4 : -4)))
+        return `hsl(${Math.round(h)}, ${Math.round(newS)}%, ${Math.round(newL)}%)`
+    })
 }
 
 function peso(p) {
@@ -36,7 +69,7 @@ function gerarGradiente(n, cores) {
 export default function Roleta({ premios, onPremioSorteado, onGirar, premioForcado }) {
     const wheelRef = useRef(null)
     const [girando, setGirando] = useState(false)
-    const cores = useMemo(() => shuffle(CORES), [])
+    const cores = useMemo(() => gerarVariacoes(PRIMARY, premios.length || 9), [premios.length])
     const gradiente = useMemo(() => gerarGradiente(premios.length, cores), [premios.length, cores])
     const sectorAngle = premios.length > 0 ? 360 / premios.length : 0
 
@@ -80,7 +113,7 @@ export default function Roleta({ premios, onPremioSorteado, onGirar, premioForca
     }
 
     if (premios.length === 0) {
-        return <div style={{ color: 'white', textAlign: 'center', paddingTop: '40vh', fontSize: '2.2vh' }}>Carregando prêmios...</div>
+        return <div style={{ color: 'var(--primary)', textAlign: 'center', paddingTop: '40vh', fontSize: '2.2vh' }}>Carregando prêmios...</div>
     }
 
     const labelRadius = 35.22 // % of circle width (31/88 * 100)
@@ -137,7 +170,7 @@ export default function Roleta({ premios, onPremioSorteado, onGirar, premioForca
             {/* Modo display: instrução visual enquanto não gira */}
             {premioForcado && !girando && (
                 <div className={styles.botaoArea}>
-                    <p style={{ color: 'white', fontSize: '2.5vh', textAlign: 'center' }}>
+                    <p style={{ color: 'var(--primary)', fontSize: '2.5vh', textAlign: 'center', fontWeight: 600 }}>
                         Aguarde o resultado...
                     </p>
                 </div>

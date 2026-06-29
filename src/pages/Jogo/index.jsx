@@ -5,8 +5,9 @@ import ModalPremio from '../../components/ModalPremio'
 import useSom from '../../hooks/useSom'
 import styles from './Jogo.module.css'
 
-const TITLE         = import.meta.env.VITE_GAME_TITLE || 'Game Roleta'
-const TITLE_DISPLAY = TITLE.toUpperCase()
+const TITLE            = import.meta.env.VITE_GAME_TITLE || 'Game Roleta'
+const TITLE_DISPLAY    = TITLE.toUpperCase()
+const QUIZ_MIN_ACERTOS = parseInt(import.meta.env.VITE_QUIZ_MIN_ACERTOS || '3')
 
 function formatarCpf(v) {
     return v.replace(/\D/g, '').slice(0, 11)
@@ -23,7 +24,7 @@ function TelaStart({ onAvancar, playBotao }) {
                 <div className={styles.logoArea}>
                     <h1 className={styles.logoTexto}>{TITLE_DISPLAY}</h1>
                 </div>
-                <p className={styles.textoInicio}>Quiz + Roleta de Prêmios</p>
+                <p className={styles.textoInicio}>Responda e<br />concorra a<br />prêmios!</p>
                 <div className={styles.botaoArea}>
                     <button className={styles.btnGame} onClick={() => { playBotao(); onAvancar() }}>
                         VAMOS LÁ
@@ -131,13 +132,10 @@ function TelaQuiz({ nomeParticipante, clienteId, onConcluido, playBotao, modoTes
     async function enviar(lista) {
         setEnviando(true)
         try {
-            if (modoTeste) {
-                const { data: premiosData } = await api.get('/api/premios')
-                onConcluido({ premios: premiosData, premioId: premiosData[0]?.id, premioNome: premiosData[0]?.nome, premioSub: premiosData[0]?.subnome, codigo: 'DEV-00000-TEST' })
-                return
-            }
-            const { data } = await api.post('/api/quiz/responder', { clienteId, respostas: lista })
-            onConcluido(data)
+            const url = modoTeste ? '/api/quiz/testar' : '/api/quiz/responder'
+            const body = modoTeste ? { respostas: lista } : { clienteId, respostas: lista }
+            const { data } = await api.post(url, body)
+            onConcluido({ ...data, total: perguntas.length })
         } catch (err) {
             setErro(err.response?.data?.erro || 'Erro ao enviar respostas.')
             setEnviando(false)
@@ -209,15 +207,15 @@ function TelaQuiz({ nomeParticipante, clienteId, onConcluido, playBotao, modoTes
 }
 
 // ─── Etapa 4: Falha no quiz ───────────────────────────────────
-function TelaFalha({ acertos, onReiniciar }) {
+function TelaFalha({ acertos, total, onReiniciar }) {
     return (
         <div className={`${styles.tela} ${styles.telaFalha}`}>
             <div className={styles.overlay}>
                 <div className={styles.textoResultado}>
                     <h2>Quase lá!</h2>
-                    <p>Você acertou <strong>{acertos}</strong> de 3 perguntas.</p>
+                    <p>Você acertou <strong>{acertos}</strong> de {total} perguntas.</p>
                     <p style={{ marginTop: '1vh', opacity: 0.85 }}>
-                        São necessários 3 acertos para girar a roleta.
+                        São necessários {QUIZ_MIN_ACERTOS} acertos para girar a roleta.
                     </p>
                 </div>
                 <div className={styles.botaoArea}>
@@ -259,13 +257,14 @@ function TelaRoleta({ premios, premioForcado, onEncerrar, play, stop }) {
 export default function Jogo() {
     const { play, stop } = useSom()
 
-    const [etapa, setEtapa]             = useState(1)
-    const [clienteId, setClienteId]     = useState(null)
-    const [nomeCliente, setNomeCliente] = useState('')
-    const [premioForcado, setPremio]    = useState(null)
-    const [premios, setPremios]         = useState([])
-    const [modoTeste, setModoTeste]     = useState(false)
-    const [acertos, setAcertos]         = useState(0)
+    const [etapa, setEtapa]               = useState(1)
+    const [clienteId, setClienteId]       = useState(null)
+    const [nomeCliente, setNomeCliente]   = useState('')
+    const [premioForcado, setPremio]      = useState(null)
+    const [premios, setPremios]           = useState([])
+    const [modoTeste, setModoTeste]       = useState(false)
+    const [acertos, setAcertos]           = useState(0)
+    const [totalPerguntas, setTotal]      = useState(0)
 
     const resetJogo = useCallback(() => {
         stop()
@@ -276,6 +275,7 @@ export default function Jogo() {
         setPremios([])
         setModoTeste(false)
         setAcertos(0)
+        setTotal(0)
     }, [stop])
 
     function handleValidado(cliente) {
@@ -287,6 +287,7 @@ export default function Jogo() {
 
     function handleQuizConcluido(data) {
         setAcertos(data.acertos ?? 0)
+        setTotal(data.total ?? 0)
         if (data.aprovado === false) {
             setEtapa(4)
             return
@@ -314,7 +315,7 @@ export default function Jogo() {
                 />
             )}
             {etapa === 4 && (
-                <TelaFalha acertos={acertos} onReiniciar={resetJogo} />
+                <TelaFalha acertos={acertos} total={totalPerguntas} onReiniciar={resetJogo} />
             )}
             {etapa === 5 && (
                 <TelaRoleta

@@ -4,8 +4,6 @@ import api from '../../services/api'
 import styles from './Cadastro.module.css'
 
 const TITLE   = import.meta.env.VITE_GAME_TITLE   || 'Game Roleta'
-const LOGO_H  = import.meta.env.VITE_LOGO_HEADER  || null
-const LOGO_F  = import.meta.env.VITE_LOGO_FOOTER  || null
 const POLL_MS = 10_000
 
 function formatarCpf(v) {
@@ -25,21 +23,9 @@ function formatarTel(v) {
 function Layout({ children }) {
     return (
         <div className={styles.layout}>
-            <header className={styles.header}>
-                {LOGO_H
-                    ? <img src={LOGO_H} alt={TITLE} className={styles.headerLogo} />
-                    : <span className={styles.headerTitle}>{TITLE}</span>
-                }
-            </header>
             <main className={styles.main}>
                 <div className={styles.inner}>{children}</div>
             </main>
-            <footer className={styles.footer}>
-                {LOGO_F
-                    ? <img src={LOGO_F} alt='' className={styles.footerLogo} />
-                    : <span className={styles.footerTitle}>{TITLE}</span>
-                }
-            </footer>
         </div>
     )
 }

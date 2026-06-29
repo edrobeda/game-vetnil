@@ -48,11 +48,14 @@
 .telaApresentacao { background-color: var(--primary); }
 .telaQuiz         { background-color: #fff; }
 .telaSucesso      { background-color: var(--primary); }
-.telaRoleta       { background-color: var(--primary); }
+.telaRoleta       { background-color: #fff; }
 .telaFalha        { background-color: var(--tangerina); }
 
+.telaQuiz .erroTexto { color: #c0392b; }
+
 /* ─── Start ─────────────────────────────────────────────────── */
-.logoArea { margin-bottom: 1vh; }
+.telaStart .overlay { gap: 8vh; }
+.logoArea { margin-bottom: 0; }
 
 .logoTexto {
     font-size: 5vh;
@@ -62,10 +65,11 @@
 }
 
 .textoInicio {
-    font-size: 2.2vh;
+    font-size: 3.5vh;
+    font-weight: 500;
     color: var(--branco);
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.4;
 }
 
 /* ─── Apresentação ──────────────────────────────────────────── */
@@ -189,10 +193,11 @@
     font-size: var(--btn-font);
     font-weight: 700;
     text-transform: uppercase;
-    border: none;
+    border: 0.15vh solid #fff;
     border-radius: 1vh;
     cursor: pointer;
     transition: filter 0.2s;
+    white-space: nowrap;
 }
 
 .btnGame:hover {

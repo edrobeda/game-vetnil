@@ -3,7 +3,7 @@ const router  = express.Router()
 const pool    = require('../db/connection')
 
 const TENANT_ID      = parseInt(process.env.TENANT_ID || '2')
-const MIN_ACERTOS    = parseInt(process.env.QUIZ_MIN_ACERTOS || '2')
+const MIN_ACERTOS    = parseInt(process.env.QUIZ_MIN_ACERTOS || '3')
 const CHANCE_PESOS   = { 1: 0.2, 2: 1, 3: 2, 4: 4, 5: 7, 6: 10 }
 
 function peso(p) { return CHANCE_PESOS[p.chance] ?? p.chance }
@@ -196,6 +196,69 @@ router.post('/responder', async (req, res) => {
         res.status(500).json({ erro: 'Erro interno.' })
     } finally {
         client.release()
+    }
+})
+
+// POST /api/quiz/testar — avalia respostas sem gravar no banco (modo dev)
+router.post('/testar', async (req, res) => {
+    const { respostas } = req.body
+    if (!Array.isArray(respostas) || respostas.length === 0) {
+        return res.status(400).json({ erro: 'respostas são obrigatórias.' })
+    }
+
+    try {
+        const ids = respostas.map(r => r.quizId)
+        const gabRes = await pool.query(
+            `SELECT id, correta, primeira, segunda, terceira, quarta, ultima_resposta
+             FROM quiz WHERE id = ANY($1) AND tenant_id = $2`,
+            [ids, TENANT_ID]
+        )
+
+        const COLUNAS = ['primeira', 'segunda', 'terceira', 'quarta', 'ultima_resposta']
+        let acertos = 0
+        for (const gab of gabRes.rows) {
+            const resp = respostas.find(r => r.quizId === gab.id)
+            if (!resp) continue
+            const ativas = COLUNAS.filter(col => gab[col])
+            const corretaColuna = COLUNAS[gab.correta - 1]
+            const corretaIdx = ativas.indexOf(corretaColuna)
+            if (resp.respostaIndex === corretaIdx) acertos++
+        }
+
+        if (acertos < MIN_ACERTOS) {
+            return res.json({ acertos, aprovado: false })
+        }
+
+        const premiosRes = await pool.query(`
+            SELECT p.id, p.nome, p.subnome, p.chance
+            FROM premios p
+            LEFT JOIN (
+                SELECT premio_id, COUNT(*) AS sorteados
+                FROM partidas WHERE premio_id IS NOT NULL AND tenant_id = $1
+                GROUP BY premio_id
+            ) s ON s.premio_id = p.id
+            WHERE p.ativo = true AND p.tenant_id = $1
+              AND (p.quantidade IS NULL OR COALESCE(s.sorteados, 0) < p.quantidade)
+        `, [TENANT_ID])
+
+        if (premiosRes.rows.length === 0) {
+            return res.status(422).json({ erro: 'Nenhum prêmio disponível.' })
+        }
+
+        const premioSorteado = sortearPremio(premiosRes.rows)
+
+        res.json({
+            acertos,
+            aprovado:   true,
+            codigo:     'DEV-00000-TEST',
+            premioId:   premioSorteado.id,
+            premioNome: premioSorteado.nome,
+            premioSub:  premioSorteado.subnome,
+            premios:    premiosRes.rows,
+        })
+    } catch (err) {
+        console.error('Erro no quiz/testar:', err.message)
+        res.status(500).json({ erro: 'Erro interno.' })
     }
 })
 
